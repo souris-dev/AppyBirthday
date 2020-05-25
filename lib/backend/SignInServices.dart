@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 enum FieldEmpty { NAME, ACCESSTOKEN, NONE, BOTH }
-enum SignInStatus { INVALID_ACCESS_TOKEN, DONE, NONE, ERROR }
+enum SignInStatus { INVALID_ACCESS_TOKEN, VALID_ACCESS_TOKEN, DONE, NONE, ERROR, CANCELED }
 
 class SignInServices {
   static GoogleSignInAccount currentGoogleAccount;
@@ -26,15 +26,24 @@ class SignInServices {
     return _googleSignIn.isSignedIn();
   }
 
-  static bool validateAccessToken() {
-    return true;
+  static SignInStatus validateAccessToken(String accessToken) {
+    return SignInStatus.VALID_ACCESS_TOKEN;
   }
 
-  static Future<SignInStatus> doGoogleSignIn() async {
-    if (!validateAccessToken()) {
+  static Future<SignInStatus> doGoogleSignIn(String accessToken) async {
+    if (validateAccessToken(accessToken) != SignInStatus.VALID_ACCESS_TOKEN) {
       return SignInStatus.INVALID_ACCESS_TOKEN;
     }
-    currentGoogleAccount = await _googleSignIn.signIn();
+
+    try {
+      currentGoogleAccount = await _googleSignIn.signIn();
+    } catch (e) {
+      if (e.code == 'sign_in_canceled') {
+        print('GOOGLE SIGN-IN CANCELED');
+        return SignInStatus.CANCELED;
+      }
+    }
+
     if (currentGoogleAccount.displayName != '') {
       return SignInStatus.DONE;
     } else {

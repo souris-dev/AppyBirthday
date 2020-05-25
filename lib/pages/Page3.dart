@@ -21,6 +21,8 @@ class _Page3State extends State<Page3> {
   final FocusNode nameNode = FocusNode();
   final FocusNode accessTokenNode = FocusNode();
 
+  bool googleSignInInitiated = false;
+
   @override
   void dispose() {
     nameNode.dispose();
@@ -161,18 +163,18 @@ class _Page3State extends State<Page3> {
                       case FieldEmpty.NAME:
                         nameNode.requestFocus();
                         Fluttertoast.showToast(
-                            msg: 'Forgot your name?', textColor: Colors.white, backgroundColor: Colors.red);
+                            msg: 'Forgot your name?', textColor: Colors.white, backgroundColor: Colors.pink[700]);
                         break;
 
                       case FieldEmpty.ACCESSTOKEN:
                         Fluttertoast.showToast(
-                            msg: 'Access token please.', textColor: Colors.white, backgroundColor: Colors.red);
+                            msg: 'Access token please.', textColor: Colors.white, backgroundColor: Colors.pink[700]);
                         accessTokenNode.requestFocus();
                         break;
 
                       case FieldEmpty.BOTH:
                         Fluttertoast.showToast(
-                            msg: 'Dummy! Fill the fields.', textColor: Colors.white, backgroundColor: Colors.red);
+                            msg: 'Dummy! Fill the fields.', textColor: Colors.white, backgroundColor: Colors.pink[700]);
                         nameNode.requestFocus();
                         break;
 
@@ -182,14 +184,23 @@ class _Page3State extends State<Page3> {
 
                     if (anyEmpty == FieldEmpty.NAME || anyEmpty == FieldEmpty.ACCESSTOKEN) {
                       return;
-                    } else {
-                      // Business logic for normal Sign-In
-                      SharedPrefsManager.setGender(signInPageAvatarButtonController.avatar);
-                      SharedPrefsManager.setName(nameController.text);
-                      SharedPrefsManager.setLoggedIn(true);
-
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => DashboardPage()));
                     }
+                    // Business logic for normal Sign-In
+                    if (SignInServices.validateAccessToken(accessTokenController.text) != SignInStatus.VALID_ACCESS_TOKEN) {
+                      Fluttertoast.showToast(
+                        msg: 'Invalid access token!',
+                        textColor: Colors.white,
+                        backgroundColor: Colors.red[800],
+                      );
+                      accessTokenNode.requestFocus();
+                      return;
+                    }
+
+                    SharedPrefsManager.setGender(signInPageAvatarButtonController.avatar);
+                    SharedPrefsManager.setName(nameController.text);
+                    SharedPrefsManager.setLoggedIn(true);
+
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => DashboardPage()));
                   },
                   text: 'GET IN',
                 ),
@@ -222,7 +233,7 @@ class _Page3State extends State<Page3> {
                               Fluttertoast.showToast(
                                 msg: 'Access token please.',
                                 textColor: Colors.white,
-                                backgroundColor: Colors.red,
+                                backgroundColor: Colors.pink[700],
                               );
 
                               accessTokenNode.requestFocus();
@@ -232,7 +243,7 @@ class _Page3State extends State<Page3> {
                               Fluttertoast.showToast(
                                 msg: 'The access token is required.',
                                 textColor: Colors.white,
-                                backgroundColor: Colors.red,
+                                backgroundColor: Colors.pink[700],
                               );
 
                               accessTokenNode.requestFocus();
@@ -246,17 +257,30 @@ class _Page3State extends State<Page3> {
                             return;
                           }
 
-                          SignInServices.doGoogleSignIn().then((value) {
-                            SharedPrefsManager.setGender(signInPageAvatarButtonController.avatar);
-                            SharedPrefsManager.setName(SignInServices.currentGoogleAccount.displayName);
-                            SharedPrefsManager.setLoggedIn(true);
+                          googleSignInInitiated = true;
+                          SignInServices.doGoogleSignIn(accessTokenController.text).then((value) {
+                            if (value == SignInStatus.DONE) {
+                              SharedPrefsManager.setGender(signInPageAvatarButtonController.avatar);
+                              SharedPrefsManager.setName(SignInServices.currentGoogleAccount.displayName);
+                              SharedPrefsManager.setLoggedIn(true);
 
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => DashboardPage()));
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => DashboardPage()));
+                            } else if (value == SignInStatus.ERROR) {
+                              throw (Exception('SignIn Error'));
+                            } else if (value == SignInStatus.INVALID_ACCESS_TOKEN) {
+                              Fluttertoast.showToast(
+                                msg: 'Invalid access token!',
+                                textColor: Colors.white,
+                                backgroundColor: Colors.red[800],
+                              );
+                              accessTokenNode.requestFocus();
+                              return;
+                            }
                           }).catchError((e) {
                             Fluttertoast.showToast(
                               msg: 'Google Sign-In failed.',
                               textColor: Colors.white,
-                              backgroundColor: Colors.red,
+                              backgroundColor: Colors.red[800],
                             );
 
                             Logger lgr = Logger();
