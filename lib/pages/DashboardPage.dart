@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:appy_birthday/backend/SharedPrefsManager.dart';
+import 'package:appy_birthday/widgets/DashboardButton.dart';
+import 'package:appy_birthday/widgets/DashboardPageView.dart';
 import 'package:appy_birthday/widgets/SignInPageAvatarButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -116,7 +118,28 @@ class _DashbordPageState extends State<DashbordPage> {
                         ),
                       ),
                     ],
-                  )
+                  ),
+                  Expanded(
+                    child: DashboardPageView(
+                      children: <Widget>[
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            DashboardButton(
+                              onPressed: () {},
+                              title: 'Eat',
+                              description: "It's a party! (lol)",
+                            ),
+                            DashboardButton(
+                              onPressed: () {},
+                              title: 'Send wishes',
+                              description: 'Send your wishes with a custom message',
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),

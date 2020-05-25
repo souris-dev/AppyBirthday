@@ -26,6 +26,7 @@ dependencies:
   http:
   flutter_launcher_icons:
   fluttertoast:
+  dotted_border:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
