@@ -7,9 +7,10 @@ class SignInPageAvatarButtonController {
 }
 
 class SignInPageAvatarButton extends StatefulWidget {
-  SignInPageAvatarButton({Key key, this.controller}) : super(key: key);
+  SignInPageAvatarButton({Key key, this.isOnSignInPage = true, this.controller}) : super(key: key);
 
   final SignInPageAvatarButtonController controller;
+  final bool isOnSignInPage;
   @override
   _SignInPageAvatarButtonState createState() => _SignInPageAvatarButtonState();
 }
@@ -31,42 +32,51 @@ class _SignInPageAvatarButtonState extends State<SignInPageAvatarButton> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            SizedBox(
-              width: MediaQuery.of(context).size.width / 4,
-            ),
-            GestureDetector(
-              onLongPress: () {
-                setState(() {
-                  timesSwitched += 1;
-                  if (timesSwitched > 3 && avaMax < 3) {
-                    Scaffold.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('You unlocked a new gender: CAT!'),
-                        action: SnackBarAction(
-                          label: 'GREAT!',
-                          onPressed: () {
-                            Scaffold.of(context).hideCurrentSnackBar();
-                          },
+            if (widget.isOnSignInPage)
+              SizedBox(
+                width: MediaQuery.of(context).size.width / 4,
+              ),
+            if (widget.isOnSignInPage)
+              GestureDetector(
+                onLongPress: () {
+                  setState(() {
+                    timesSwitched += 1;
+                    if (timesSwitched > 3 && avaMax < 3) {
+                      Scaffold.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('You unlocked a new gender: CAT!'),
+                          action: SnackBarAction(
+                            label: 'GREAT!',
+                            onPressed: () {
+                              Scaffold.of(context).hideCurrentSnackBar();
+                            },
+                          ),
                         ),
-                      ),
-                    );
-                    avaMax = 3;
-                  }
-                  avaIndex = (avaIndex + 1) % avaMax;
-                  widget.controller.avatar = avatarsAvailable[avaIndex];
-                });
-              },
-              child: CircleAvatar(
+                      );
+                      avaMax = 3;
+                    }
+                    avaIndex = (avaIndex + 1) % avaMax;
+                    widget.controller.avatar = avatarsAvailable[avaIndex];
+                  });
+                },
+                child: CircleAvatar(
+                  backgroundColor: Colors.white,
+                  backgroundImage: AssetImage(avatarAssets[widget.controller.avatar]), // : AssetImage(),
+                  radius: MediaQuery.of(context).size.width * 0.207 / 1.6,
+                ),
+              ),
+            if (!widget.isOnSignInPage)
+              CircleAvatar(
                 backgroundColor: Colors.white,
                 backgroundImage: AssetImage(avatarAssets[widget.controller.avatar]), // : AssetImage(),
                 radius: MediaQuery.of(context).size.width * 0.207 / 1.6,
               ),
-            ),
-            Image.asset(
-              "assets/raster/ExplTextAvatar.png",
-              height: MediaQuery.of(context).size.height * 0.156,
-              width: MediaQuery.of(context).size.width * 0.3055,
-            )
+            if (widget.isOnSignInPage)
+              Image.asset(
+                "assets/raster/ExplTextAvatar.png",
+                height: MediaQuery.of(context).size.height * 0.156,
+                width: MediaQuery.of(context).size.width * 0.3055,
+              )
           ],
         ),
       ),

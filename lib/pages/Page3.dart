@@ -1,3 +1,4 @@
+import 'package:appy_birthday/backend/SharedPrefsManager.dart';
 import 'package:appy_birthday/backend/SignInServices.dart';
 import 'package:appy_birthday/widgets/SignInPageAvatarButton.dart';
 import 'package:flutter/material.dart';
@@ -179,6 +180,7 @@ class _Page3State extends State<Page3> {
                     }
 
                     // Business logic for normal Sign-In
+                    SharedPrefsManager.setGender(signInPageAvatarButtonController.avatar);
                   },
                   text: 'GET IN',
                 ),
