@@ -23,10 +23,10 @@ class _DashboardButtonState extends State<DashboardButton> {
         GestureDetector(
           onTap: widget.onPressed,
           child: DottedBorder(
-            color: Color(0xB892F9),
+            color: Color.fromRGBO(184, 146, 249, 1),
             radius: Radius.circular(10),
-            strokeWidth: 1,
-            dashPattern: [5, 5],
+            strokeWidth: 0.1,
+            dashPattern: [1.2, 1.2],
             child: Container(
               color: Colors.white,
               padding: EdgeInsets.all(6),
@@ -36,10 +36,10 @@ class _DashboardButtonState extends State<DashboardButton> {
                     padding: EdgeInsets.only(bottom: 4),
                     child: Text(
                       widget.title,
-                      style: TextStyle(color: Color(0x430AC9), fontSize: 14, fontFamily: 'SegoePrint'),
+                      style: TextStyle(color: Color.fromRGBO(67, 10, 201, 1), fontSize: 3, fontFamily: 'SegoePrint'),
                     ),
                   ),
-                  Expanded(
+                  /*Expanded(
                     child: Wrap(
                       children: <Widget>[
                         Text(
@@ -48,7 +48,7 @@ class _DashboardButtonState extends State<DashboardButton> {
                         ),
                       ],
                     ),
-                  ),
+                  ),*/
                 ],
               ),
             ),
@@ -61,7 +61,7 @@ class _DashboardButtonState extends State<DashboardButton> {
             child: Transform.rotate(
               angle: widget.arrowRotation,
               child: Image.asset(
-                'assets/raster/RightArrow_violet',
+                'assets/raster/RightArrow_violet.png',
                 height: 10,
                 width: 10,
               ),

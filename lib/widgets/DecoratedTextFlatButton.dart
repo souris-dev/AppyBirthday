@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class DecoratedTextFlatButton extends FlatButton {
   DecoratedTextFlatButton({this.text, this.onPressed})
       : super(
+            color: Colors.white,
             onPressed: onPressed,
             padding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
             shape: RoundedRectangleBorder(

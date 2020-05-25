@@ -1,8 +1,11 @@
 import 'package:appy_birthday/backend/SharedPrefsManager.dart';
 import 'package:appy_birthday/backend/SignInServices.dart';
+import 'package:appy_birthday/pages/DashboardPage.dart';
 import 'package:appy_birthday/widgets/SignInPageAvatarButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:logger/logger.dart';
 import '../widgets/DecoratedTextFlatButton.dart';
 import '../widgets/DecoratedTextRaisedButton.dart';
 
@@ -17,6 +20,22 @@ class _Page3State extends State<Page3> {
   final SignInPageAvatarButtonController signInPageAvatarButtonController = SignInPageAvatarButtonController();
   final FocusNode nameNode = FocusNode();
   final FocusNode accessTokenNode = FocusNode();
+
+  @override
+  void dispose() {
+    nameNode.dispose();
+    accessTokenNode.dispose();
+    nameController.dispose();
+    accessTokenController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,6 +92,13 @@ class _Page3State extends State<Page3> {
                               padding: EdgeInsets.all(10),
                               child: TextField(
                                 focusNode: nameNode,
+                                controller: nameController,
+                                keyboardType: TextInputType.text,
+                                textInputAction: TextInputAction.next,
+                                onSubmitted: (text) {
+                                  nameNode.unfocus();
+                                  accessTokenNode.requestFocus();
+                                },
                                 decoration: InputDecoration(
                                   contentPadding: EdgeInsets.all(20),
                                   border: OutlineInputBorder(
@@ -98,6 +124,7 @@ class _Page3State extends State<Page3> {
                               padding: EdgeInsets.fromLTRB(10, 17, 10, 10),
                               child: TextField(
                                 focusNode: accessTokenNode,
+                                controller: accessTokenController,
                                 decoration: InputDecoration(
                                   contentPadding: EdgeInsets.all(20),
                                   border: OutlineInputBorder(
@@ -128,46 +155,24 @@ class _Page3State extends State<Page3> {
                 DecoratedTextFlatButton(
                   onPressed: () {
                     FieldEmpty anyEmpty = SignInServices.checkInputEmpty(nameController, accessTokenController, true);
+                    Logger loggr = new Logger();
+                    loggr.d((nameController.text == "").toString() + ' ' + (accessTokenController.text == "").toString());
                     switch (anyEmpty) {
                       case FieldEmpty.NAME:
-                        Scaffold.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Forgot your name?'),
-                            action: SnackBarAction(
-                                label: 'LOL',
-                                onPressed: () {
-                                  Scaffold.of(context).hideCurrentSnackBar();
-                                }),
-                          ),
-                        );
                         nameNode.requestFocus();
+                        Fluttertoast.showToast(
+                            msg: 'Forgot your name?', textColor: Colors.white, backgroundColor: Colors.red);
                         break;
 
                       case FieldEmpty.ACCESSTOKEN:
-                        Scaffold.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Access token, please.'),
-                            action: SnackBarAction(
-                                label: 'OK!',
-                                onPressed: () {
-                                  Scaffold.of(context).hideCurrentSnackBar();
-                                }),
-                          ),
-                        );
+                        Fluttertoast.showToast(
+                            msg: 'Access token please.', textColor: Colors.white, backgroundColor: Colors.red);
                         accessTokenNode.requestFocus();
                         break;
 
                       case FieldEmpty.BOTH:
-                        Scaffold.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Dummy! Fill the fields.'),
-                            action: SnackBarAction(
-                                label: 'OK!',
-                                onPressed: () {
-                                  Scaffold.of(context).hideCurrentSnackBar();
-                                }),
-                          ),
-                        );
+                        Fluttertoast.showToast(
+                            msg: 'Dummy! Fill the fields.', textColor: Colors.white, backgroundColor: Colors.red);
                         nameNode.requestFocus();
                         break;
 
@@ -177,10 +182,14 @@ class _Page3State extends State<Page3> {
 
                     if (anyEmpty == FieldEmpty.NAME || anyEmpty == FieldEmpty.ACCESSTOKEN) {
                       return;
-                    }
+                    } else {
+                      // Business logic for normal Sign-In
+                      SharedPrefsManager.setGender(signInPageAvatarButtonController.avatar);
+                      SharedPrefsManager.setName(nameController.text);
+                      SharedPrefsManager.setLoggedIn(true);
 
-                    // Business logic for normal Sign-In
-                    SharedPrefsManager.setGender(signInPageAvatarButtonController.avatar);
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => DashboardPage()));
+                    }
                   },
                   text: 'GET IN',
                 ),
@@ -209,45 +218,23 @@ class _Page3State extends State<Page3> {
                         onPressed: () {
                           FieldEmpty anyEmpty = SignInServices.checkInputEmpty(nameController, accessTokenController, true);
                           switch (anyEmpty) {
-                            case FieldEmpty.NAME:
-                              Scaffold.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Forgot your name?'),
-                                  action: SnackBarAction(
-                                      label: 'LOL',
-                                      onPressed: () {
-                                        Scaffold.of(context).hideCurrentSnackBar();
-                                      }),
-                                ),
-                              );
-                              nameNode.requestFocus();
-                              break;
-
                             case FieldEmpty.ACCESSTOKEN:
-                              Scaffold.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Access token, please.'),
-                                  action: SnackBarAction(
-                                      label: 'OK!',
-                                      onPressed: () {
-                                        Scaffold.of(context).hideCurrentSnackBar();
-                                      }),
-                                ),
+                              Fluttertoast.showToast(
+                                msg: 'Access token please.',
+                                textColor: Colors.white,
+                                backgroundColor: Colors.red,
                               );
+
                               accessTokenNode.requestFocus();
                               break;
 
                             case FieldEmpty.BOTH:
-                              Scaffold.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('The access token is required.'),
-                                  action: SnackBarAction(
-                                      label: 'OK!',
-                                      onPressed: () {
-                                        Scaffold.of(context).hideCurrentSnackBar();
-                                      }),
-                                ),
+                              Fluttertoast.showToast(
+                                msg: 'The access token is required.',
+                                textColor: Colors.white,
+                                backgroundColor: Colors.red,
                               );
+
                               accessTokenNode.requestFocus();
                               break;
 
@@ -255,9 +242,27 @@ class _Page3State extends State<Page3> {
                               break;
                           }
 
-                          if (anyEmpty == FieldEmpty.ACCESSTOKEN) {
+                          if (anyEmpty == FieldEmpty.ACCESSTOKEN || anyEmpty == FieldEmpty.BOTH) {
                             return;
                           }
+
+                          SignInServices.doGoogleSignIn().then((value) {
+                            SharedPrefsManager.setGender(signInPageAvatarButtonController.avatar);
+                            SharedPrefsManager.setName(SignInServices.currentGoogleAccount.displayName);
+                            SharedPrefsManager.setLoggedIn(true);
+
+                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => DashboardPage()));
+                          }).catchError((e) {
+                            Fluttertoast.showToast(
+                              msg: 'Google Sign-In failed.',
+                              textColor: Colors.white,
+                              backgroundColor: Colors.red,
+                            );
+
+                            Logger lgr = Logger();
+                            lgr.e('Could not do Google Sign-In');
+                            print(e.error);
+                          });
 
                           // Business logic here for Google Sign-In
                         },
