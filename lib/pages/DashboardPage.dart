@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:appy_birthday/backend/SharedPrefsManager.dart';
+import 'package:appy_birthday/pages/EatPage.dart';
 import 'package:appy_birthday/widgets/DashboardButton.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../widgets/DecoratedTextFlatButton.dart';
@@ -126,6 +127,9 @@ class _DashboardPageState extends State<DashboardPage> {
                                   Padding(
                                     padding: EdgeInsets.only(bottom: 10),
                                     child: DashboardButton(
+                                      onPressed: () {
+                                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => EatMenuPage()));
+                                      },
                                       assetName: "assets/raster/EatBtn.png",
                                       height: MediaQuery.of(context).size.height * (95 / 640),
                                       width: MediaQuery.of(context).size.width * (207 / 360),
