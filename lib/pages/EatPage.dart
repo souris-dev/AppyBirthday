@@ -1,4 +1,5 @@
 import 'package:appy_birthday/widgets/DashboardButton.dart';
+import 'package:appy_birthday/widgets/DecoratedTextRaisedButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -87,7 +88,25 @@ class _EatMenuPageState extends State<EatMenuPage> {
                         ),
                       ),
                     ),
-                  )
+                  ),
+                  Positioned(
+                      bottom: 10,
+                      left: 10,
+                      child: DecoratedTextRaisedButton(
+                        text: ' DASHBOARD ',
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          SystemChrome.setSystemUIOverlayStyle(
+                            SystemUiOverlayStyle(
+                              statusBarColor: Colors.white,
+                              statusBarBrightness: Brightness.dark,
+                              statusBarIconBrightness: Brightness.dark,
+                              systemNavigationBarColor: Colors.white,
+                              systemNavigationBarIconBrightness: Brightness.dark,
+                            ),
+                          );
+                        },
+                      ))
                 ],
               )),
         ),

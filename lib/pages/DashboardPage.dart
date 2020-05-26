@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:appy_birthday/backend/SharedPrefsManager.dart';
 import 'package:appy_birthday/pages/EatPage.dart';
+import 'package:appy_birthday/pages/RouteAnimations.dart';
 import 'package:appy_birthday/widgets/DashboardButton.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../widgets/DecoratedTextFlatButton.dart';
@@ -128,7 +129,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                     padding: EdgeInsets.only(bottom: 10),
                                     child: DashboardButton(
                                       onPressed: () {
-                                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => EatMenuPage()));
+                                        Navigator.of(context).push(RouteAnimations.createRoute(EatMenuPage()));
                                       },
                                       assetName: "assets/raster/EatBtn.png",
                                       height: MediaQuery.of(context).size.height * (95 / 640),
@@ -139,8 +140,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                     padding: EdgeInsets.only(bottom: 10),
                                     child: DashboardButton(
                                       onPressed: () {
-                                        Navigator.of(context)
-                                            .push(MaterialPageRoute(builder: (context) => SendWishesPage()));
+                                        Navigator.of(context).push(RouteAnimations.createRoute(SendWishesPage()));
                                       },
                                       assetName: "assets/raster/SendWishesBtn.png",
                                       height: MediaQuery.of(context).size.height * (95 / 640),
@@ -160,8 +160,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                     padding: EdgeInsets.only(bottom: 10),
                                     child: DashboardButton(
                                       onPressed: () {
-                                        Navigator.of(context)
-                                            .push(MaterialPageRoute(builder: (context) => SendWishesPage()));
+                                        Navigator.of(context).push(RouteAnimations.createRoute(SendWishesPage()));
                                       },
                                       assetName: "assets/raster/SendWishesBtn.png",
                                       height: MediaQuery.of(context).size.height * (95 / 640),
