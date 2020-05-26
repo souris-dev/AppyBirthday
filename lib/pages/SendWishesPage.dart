@@ -195,7 +195,6 @@ class _SendWishesPageState extends State<SendWishesPage> with TickerProviderStat
                                 width: MediaQuery.of(context).size.width * 0.3194,
                                 child: DecoratedTextFlatButtonWithIcon(
                                   onPressed: () async {
-                                    print(keyTextEditor.currentState.textController.text);
                                     ServerServices.doSend(
                                         keyTextEditor.currentState.textController.text, await SharedPrefsManager.getName());
                                     setState(() => startedSending = true);
