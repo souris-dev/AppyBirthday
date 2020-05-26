@@ -101,7 +101,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     padding: EdgeInsets.fromLTRB(10, 10, 10, 15),
                     child: DecoratedTextFlatButton(
                       onPressed: () {
-                        // TODO: What if user is already logged in?
                         SharedPrefsManager.isLoggedIn().then((loggedIn) {
                           print('User logged in? ' + loggedIn.toString());
                           if (!loggedIn) {

@@ -3,72 +3,37 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 class DashboardButton extends StatefulWidget {
-  DashboardButton({Key key, this.arrowRotation = 0, this.title, this.description, this.onPressed}) : super(key: key);
+  DashboardButton({Key key, this.assetName, this.onPressed, this.height, this.width}) : super(key: key);
 
-  final double arrowRotation;
-  final String title;
-  final String description;
-  final Function onPressed;
+  final String assetName;
+  final Function() onPressed;
+  final double height;
+  final double width;
 
   @override
   _DashboardButtonState createState() => _DashboardButtonState();
 }
 
 class _DashboardButtonState extends State<DashboardButton> {
+  double offsetX = 0;
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        GestureDetector(
-          onTap: widget.onPressed,
-          child: DottedBorder(
-            color: Color.fromRGBO(184, 146, 249, 1),
-            radius: Radius.circular(10),
-            strokeWidth: 0.1,
-            dashPattern: [1.2, 1.2],
-            child: Container(
-              color: Colors.white,
-              padding: EdgeInsets.all(6),
-              child: Column(
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 4),
-                    child: Text(
-                      widget.title,
-                      style: TextStyle(color: Color.fromRGBO(67, 10, 201, 1), fontSize: 3, fontFamily: 'SegoePrint'),
-                    ),
-                  ),
-                  /*Expanded(
-                    child: Wrap(
-                      children: <Widget>[
-                        Text(
-                          widget.description,
-                          style: TextStyle(color: Color(0xF75842), fontSize: 11, fontFamily: 'SegoePrint'),
-                        ),
-                      ],
-                    ),
-                  ),*/
-                ],
-              ),
-            ),
-          ),
+    return GestureDetector(
+      onTapDown: (TapDownDetails det) {
+        setState(() => offsetX = 2);
+      },
+      onTapUp: (TapUpDetails det) {
+        setState(() => offsetX = 0);
+      },
+      onTap: widget.onPressed,
+      child: Transform.translate(
+        offset: Offset(offsetX, 0),
+        child: Image.asset(
+          widget.assetName,
+          height: widget.height,
+          width: widget.width,
         ),
-        Padding(
-          padding: EdgeInsets.only(left: 10),
-          child: GestureDetector(
-            onTap: widget.onPressed,
-            child: Transform.rotate(
-              angle: widget.arrowRotation,
-              child: Image.asset(
-                'assets/raster/RightArrow_violet.png',
-                height: 10,
-                width: 10,
-              ),
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

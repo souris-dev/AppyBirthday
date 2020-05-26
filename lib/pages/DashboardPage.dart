@@ -9,29 +9,8 @@ import 'package:appy_birthday/widgets/DashboardPageView.dart';
 import 'package:appy_birthday/widgets/SignInPageAvatarButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'dart:math';
-
-class DiscData {
-  static final _rng = Random();
-
-  double size;
-  Color color;
-  Alignment alignment;
-
-  DiscData() {
-    color = Color.fromARGB(
-      _rng.nextInt(50),
-      _rng.nextInt(255),
-      _rng.nextInt(255),
-      _rng.nextInt(255),
-    );
-    size = _rng.nextDouble() * 82 + 10;
-    alignment = Alignment(
-      _rng.nextDouble() * 2 - 1,
-      _rng.nextDouble() * 2 - 1,
-    );
-  }
-}
+import '../widgets/DiscData.dart';
+import 'SendWishesPage.dart';
 
 class DashboardPage extends StatefulWidget {
   DashboardPage({Key key}) : super(key: key);
@@ -144,7 +123,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
-                                  GestureDetector(
+                                  /*GestureDetector(
                                     onTap: () {},
                                     child: Padding(
                                       padding: EdgeInsets.only(bottom: 10),
@@ -156,7 +135,9 @@ class _DashboardPageState extends State<DashboardPage> {
                                     ),
                                   ),
                                   GestureDetector(
-                                    onTap: () {},
+                                    onTap: () {
+                                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => SendWishesPage()));
+                                    },
                                     child: Padding(
                                       padding: EdgeInsets.only(top: 10),
                                       child: Image.asset(
@@ -164,6 +145,26 @@ class _DashboardPageState extends State<DashboardPage> {
                                         height: MediaQuery.of(context).size.height * (95 / 640),
                                         width: MediaQuery.of(context).size.width * (207 / 360),
                                       ),
+                                    ),
+                                  ),*/
+                                  Padding(
+                                    padding: EdgeInsets.only(bottom: 10),
+                                    child: DashboardButton(
+                                      assetName: "assets/raster/EatBtn.png",
+                                      height: MediaQuery.of(context).size.height * (95 / 640),
+                                      width: MediaQuery.of(context).size.width * (207 / 360),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(bottom: 10),
+                                    child: DashboardButton(
+                                      onPressed: () {
+                                        Navigator.of(context)
+                                            .push(MaterialPageRoute(builder: (context) => SendWishesPage()));
+                                      },
+                                      assetName: "assets/raster/SendWishesBtn.png",
+                                      height: MediaQuery.of(context).size.height * (95 / 640),
+                                      width: MediaQuery.of(context).size.width * (207 / 360),
                                     ),
                                   ),
                                 ],
@@ -193,7 +194,8 @@ class _DashboardPageState extends State<DashboardPage> {
                                     context: context,
                                     builder: (context) => AlertDialog(
                                       title: Text('Leave?'),
-                                      content: Text('Do you want to leave?\nYou can log out by long-pressing the EXIT button twice.'),
+                                      content: Text(
+                                          'Do you want to leave?\nYou can log out by long-pressing the EXIT button twice.'),
                                       actions: <Widget>[
                                         FlatButton(
                                           child: Text('YES'),

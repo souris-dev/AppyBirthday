@@ -96,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
                           children: <Widget>[
                             Center(
                               child: Text(
-                                'Tell me about yourself!',
+                                widget.isLoggedIn ? "Let's get in!" : 'Tell me about yourself!',
                                 style: TextStyle(
                                   color: Color.fromRGBO(13, 33, 67, 1),
                                   fontFamily: 'SegoePrint',
