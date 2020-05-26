@@ -1,3 +1,6 @@
+import 'package:appy_birthday/backend/ServerServices.dart';
+import 'package:appy_birthday/pages/FoodPage.dart';
+import 'package:appy_birthday/pages/RouteAnimations.dart';
 import 'package:appy_birthday/widgets/DashboardButton.dart';
 import 'package:appy_birthday/widgets/DecoratedTextRaisedButton.dart';
 import 'package:flutter/material.dart';
@@ -68,19 +71,25 @@ class _EatMenuPageState extends State<EatMenuPage> {
                           children: <Widget>[
                             DashboardButton(
                               assetName: 'assets/raster/EatMenuPizzaBtn.png',
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.of(context).push(RouteAnimations.createRoute(FoodPage(foodType: Food.PIZZA)));
+                              },
                               height: MediaQuery.of(context).size.height * (47 / 640),
                               width: MediaQuery.of(context).size.width * 0.5,
                             ),
                             DashboardButton(
                               assetName: 'assets/raster/EatMenuTeaBtn.png',
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.of(context).push(RouteAnimations.createRoute(FoodPage(foodType: Food.CF)));
+                              },
                               height: MediaQuery.of(context).size.height * (47 / 640),
                               width: MediaQuery.of(context).size.width * 0.5,
                             ),
                             DashboardButton(
                               assetName: 'assets/raster/EatMenuDosaSambarBtn.png',
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.of(context).push(RouteAnimations.createRoute(FoodPage(foodType: Food.DOSA)));
+                              },
                               height: MediaQuery.of(context).size.height * (47 / 640),
                               width: MediaQuery.of(context).size.width * 0.5,
                             )

@@ -1,3 +1,4 @@
+import 'package:appy_birthday/backend/ServerServices.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/SignInPageAvatarButton.dart';
 import 'SignInServices.dart';
@@ -15,6 +16,7 @@ class SharedPrefsManager {
     _sharedPreferences.setString('name', 'Nanashi');
     _sharedPreferences.setBool('loggedIn', false);
     _sharedPreferences.setString('accessToken', '');
+    _sharedPreferences.setInt('level', -1);
     if (await SignInServices.isGoogleSignedIn) {
       SignInServices.doGoogleSignOut();
     }
@@ -68,5 +70,33 @@ class SharedPrefsManager {
   static Future<String> getAccessToken() async {
     _sharedPreferences = await SharedPreferences.getInstance();
     return _sharedPreferences.getString('accessToken');
+  }
+
+  static Future<void> setAccessLevel(AccessCheck level) async {
+    _sharedPreferences = await SharedPreferences.getInstance();
+    int lvl = -1;
+
+    if (level == AccessCheck.HIGH) {
+      lvl = 0;
+    } else if (level == AccessCheck.LOW) {
+      lvl = 1;
+    } else {
+      lvl = -1;
+    }
+
+    _sharedPreferences.setInt('level', lvl);
+  }
+
+  static Future<AccessCheck> getAccessLevel() async {
+    _sharedPreferences = await SharedPreferences.getInstance();
+    int lvl = _sharedPreferences.getInt('level');
+
+    if (lvl == 0) {
+      return AccessCheck.HIGH;
+    } else if (lvl == 1) {
+      return AccessCheck.LOW;
+    } else {
+      return AccessCheck.INVALID_OR_ERROR;
+    }
   }
 }

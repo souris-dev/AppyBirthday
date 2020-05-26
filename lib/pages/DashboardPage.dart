@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:appy_birthday/backend/ServerServices.dart';
 import 'package:appy_birthday/backend/SharedPrefsManager.dart';
 import 'package:appy_birthday/pages/EatPage.dart';
 import 'package:appy_birthday/pages/RouteAnimations.dart';
@@ -26,15 +27,17 @@ class _DashboardPageState extends State<DashboardPage> {
   final numberOfDiscs = 44;
   String name = '';
   int longPressedExitTimes = 0;
+  AccessCheck accessLevel = AccessCheck.LOW;
   final SignInPageAvatarButtonController avatarDisplayCont = SignInPageAvatarButtonController();
 
-  void getAvatarAndName() async {
+  void getAvatarAccessLevelAndName() async {
     var namae = await SharedPrefsManager.getName();
     var avatarDisplayContAvatar = await SharedPrefsManager.getGenderAvatar();
+    var lvl = await SharedPrefsManager.getAccessLevel();
 
     setState(() {
       this.name = namae;
-      print('Setting name as: ' + namae);
+      this.accessLevel = lvl;
       this.avatarDisplayCont.avatar = avatarDisplayContAvatar;
     });
   }
@@ -45,7 +48,7 @@ class _DashboardPageState extends State<DashboardPage> {
     _makeDiscs();
     name = '(just a sec)';
     avatarDisplayCont.avatar = Avatar.MALE;
-    getAvatarAndName();
+    getAvatarAccessLevelAndName();
     Timer.periodic(Duration(seconds: 5), (timer) => setState(() => _makeDiscs()));
   }
 
@@ -150,34 +153,30 @@ class _DashboardPageState extends State<DashboardPage> {
                                 ],
                               ),
                             ),
-                            // TODO: Just for testing
-                            FittedBox(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Padding(
-                                    padding: EdgeInsets.only(bottom: 10),
-                                    child: DashboardButton(
-                                      onPressed: () {
-                                        Navigator.of(context).push(RouteAnimations.createRoute(SendWishesPage()));
-                                      },
-                                      assetName: "assets/raster/SendWishesBtn.png",
-                                      height: MediaQuery.of(context).size.height * (95 / 640),
-                                      width: MediaQuery.of(context).size.width * (207 / 360),
+                            if (accessLevel == AccessCheck.HIGH)
+                              FittedBox(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 10),
+                                      child: DashboardButton(
+                                        onPressed: () {
+                                          Fluttertoast.showToast(
+                                            msg: 'Thanks! Dial my number and give a call!',
+                                            backgroundColor: Colors.blue[700],
+                                            textColor: Colors.white,
+                                          );
+                                        },
+                                        assetName: "assets/raster/CallMeBtn.png",
+                                        height: MediaQuery.of(context).size.height * (95 / 640),
+                                        width: MediaQuery.of(context).size.width * (207 / 360),
+                                      ),
                                     ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(bottom: 10),
-                                    child: DashboardButton(
-                                      assetName: "assets/raster/EatBtn.png",
-                                      height: MediaQuery.of(context).size.height * (95 / 640),
-                                      width: MediaQuery.of(context).size.width * (207 / 360),
-                                    ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
                           ],
                         ),
                       ),

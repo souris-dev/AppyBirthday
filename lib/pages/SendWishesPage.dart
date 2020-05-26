@@ -22,6 +22,8 @@ class _SendWishesPageState extends State<SendWishesPage> with TickerProviderStat
   Widget innerChild;
 
   AnimationController sendAnimationController;
+  AnimationController textboxAnimationController;
+  Animation<double> degreeAnimation;
   Animation<Offset> sendOffsetAnimation;
   Animation<double> sendScaleAnimation;
 
@@ -39,40 +41,39 @@ class _SendWishesPageState extends State<SendWishesPage> with TickerProviderStat
     _makeDiscs();
     Fluttertoast.showToast(msg: 'Use the back button to go to the dashboard.');
     Timer.periodic(Duration(seconds: 5), (timer) => setState(() => _makeDiscs()));
-
-    innerChild = Transform.rotate(
-      angle: 1.2 * pi / 180,
-      child: Padding(
-        padding: EdgeInsets.all(30),
-        child: Stack(
-          children: <Widget>[
-            Image.asset(
-              'assets/raster/TextEditorBg.png',
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-              child: Transform.rotate(
-                angle: -1.2 * pi / 180,
-                child: TextEditor(key: keyTextEditor),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
-  // Called after initState()
+  // Called after initState(), when with TickerProviderStateMixin
   @override
   void didChangeDependencies() {
+    // Need to do the animation setup here
+    // because I need the Media size using MediaQuery.of(context) in one of the animations
+    // which cannot be accessed during initState()
+
     sendAnimationController = AnimationController(duration: Duration(milliseconds: 2500), vsync: this);
     sendOffsetAnimation = Tween<Offset>(
-            begin: Offset(0, 0), end: Offset(MediaQuery.of(context).size.width, -MediaQuery.of(context).size.width))
-        // We want  45 degrees angle
-        .animate(CurvedAnimation(parent: sendAnimationController, curve: Curves.elasticIn));
+      begin: Offset(0, 0),
+      end: Offset(MediaQuery.of(context).size.width, -MediaQuery.of(context).size.width), // We want a 45 degrees angle
+    ).animate(
+      CurvedAnimation(
+        parent: sendAnimationController,
+        curve: Curves.elasticIn,
+      ),
+    );
 
     sendScaleAnimation = Tween<double>(begin: 1, end: 0.3).animate(
-      CurvedAnimation(curve: Interval(0.8, 1.0, curve: Curves.linearToEaseOut), parent: sendAnimationController),
+      CurvedAnimation(
+        curve: Interval(0.8, 1.0, curve: Curves.linearToEaseOut),
+        parent: sendAnimationController,
+      ),
+    );
+
+    textboxAnimationController = AnimationController(duration: Duration(seconds: 3), vsync: this);
+    degreeAnimation = Tween<double>(begin: 0.2, end: 1.2).animate(
+      CurvedAnimation(
+        parent: textboxAnimationController,
+        curve: Curves.linear,
+      ),
     );
 
     sendOffsetAnimation.addListener(() {
@@ -82,15 +83,19 @@ class _SendWishesPageState extends State<SendWishesPage> with TickerProviderStat
     sendScaleAnimation.addListener(() {
       setState(() {});
     });
+    degreeAnimation.addListener(() {
+      setState(() {});
+    });
 
     sendOffsetAnimation.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        Fluttertoast.showToast(msg: 'Your message will be sent.');
+        //Fluttertoast.showToast(msg: 'Your message will be sent.');
         Navigator.of(context).pop();
       }
     });
 
     super.didChangeDependencies();
+    textboxAnimationController.repeat(reverse: true);
   }
 
   void _makeDiscs() {
@@ -115,6 +120,27 @@ class _SendWishesPageState extends State<SendWishesPage> with TickerProviderStat
               width: MediaQuery.of(context).size.width * 0.605,
               height: MediaQuery.of(context).size.width * 0.605,
             ),
+          ),
+        ),
+      );
+    } else {
+      innerChild = Transform.rotate(
+        angle: degreeAnimation.value * pi / 180,
+        child: Padding(
+          padding: EdgeInsets.all(30),
+          child: Stack(
+            children: <Widget>[
+              Image.asset(
+                'assets/raster/TextEditorBg.png',
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                child: Transform.rotate(
+                  angle: -degreeAnimation.value * pi / 180,
+                  child: TextEditor(key: keyTextEditor),
+                ),
+              ),
+            ],
           ),
         ),
       );
@@ -197,6 +223,8 @@ class _SendWishesPageState extends State<SendWishesPage> with TickerProviderStat
                                   onPressed: () async {
                                     ServerServices.doSend(
                                         keyTextEditor.currentState.textController.text, await SharedPrefsManager.getName());
+                                    textboxAnimationController.stop();
+                                    textboxAnimationController.dispose();
                                     setState(() => startedSending = true);
                                   },
                                   icon: Icons.send,

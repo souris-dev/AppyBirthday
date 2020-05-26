@@ -1,3 +1,4 @@
+import 'package:appy_birthday/backend/ServerServices.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/services.dart';
@@ -27,13 +28,8 @@ class SignInServices {
     return _googleSignIn.isSignedIn();
   }
 
-  static SignInStatus validateAccessToken(String accessToken) {
-    // TODO: Code for accessToken validation
-    return SignInStatus.VALID_ACCESS_TOKEN;
-  }
-
   static Future<SignInStatus> doGoogleSignIn(String accessToken) async {
-    if (validateAccessToken(accessToken) != SignInStatus.VALID_ACCESS_TOKEN) {
+    if (await ServerServices.checkAccessToken(accessToken) == AccessCheck.INVALID_OR_ERROR) {
       return SignInStatus.INVALID_ACCESS_TOKEN;
     }
 

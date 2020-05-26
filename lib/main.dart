@@ -1,9 +1,11 @@
 import 'package:appy_birthday/backend/SharedPrefsManager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'pages/Page2.dart';
 import 'widgets/DecoratedTextFlatButton.dart';
 import 'pages/LoginPage.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,8 +19,7 @@ void main() {
 
 class CustomScrollBehaviour extends ScrollBehavior {
   @override
-  Widget buildViewportChrome(
-      BuildContext context, Widget child, AxisDirection axisDirection) {
+  Widget buildViewportChrome(BuildContext context, Widget child, AxisDirection axisDirection) {
     return child;
   }
 }
@@ -54,9 +55,50 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool connectionCheckTried = false;
+
+  void checkConnection() async {
+    Fluttertoast.showToast(
+      msg: 'Checking connection...',
+      backgroundColor: Color.fromRGBO(2, 75, 150, 0.8),
+      textColor: Colors.white,
+    );
+    // Ping server once for fast responses
+    var uri = "https://appy-birthday.herokuapp.com";
+
+    try {
+      var response = await http.get(uri);
+
+      if (response.statusCode == 200) {
+        Fluttertoast.showToast(
+          msg: 'All okay!',
+          backgroundColor: Colors.blue[700],
+          textColor: Colors.white,
+        );
+        setState(() => connectionCheckTried = true);
+      } else {
+        Fluttertoast.showToast(
+          msg: 'Server error!',
+          backgroundColor: Colors.pink[800],
+          textColor: Colors.white,
+        );
+        print('Server ERROR code: ' + response.statusCode.toString());
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: 'Connection error! Check internet.',
+        backgroundColor: Colors.pink[800],
+        textColor: Colors.white,
+      );
+      print('ERROR WHILE PINGING: ' + e.toString());
+    }
+    setState(() => connectionCheckTried = true);
+  }
+
   @override
   void initState() {
     super.initState();
+    checkConnection();
     SharedPrefsManager.loadSharedPrefs();
   }
 
@@ -115,6 +157,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     padding: EdgeInsets.fromLTRB(10, 10, 10, 15),
                     child: DecoratedTextFlatButton(
                       onPressed: () {
+                        if (!connectionCheckTried) {
+                          Fluttertoast.showToast(
+                            msg: 'Please wait, checking connection!',
+                            backgroundColor: Colors.pink[700],
+                            textColor: Colors.white,
+                          );
+                        }
+
                         SharedPrefsManager.isLoggedIn().then((loggedIn) {
                           print('User logged in? ' + loggedIn.toString());
                           if (!loggedIn) {

@@ -1,3 +1,4 @@
+import 'package:appy_birthday/backend/ServerServices.dart';
 import 'package:appy_birthday/backend/SharedPrefsManager.dart';
 import 'package:appy_birthday/backend/SignInServices.dart';
 import 'package:appy_birthday/pages/DashboardPage.dart';
@@ -183,7 +184,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 DecoratedTextFlatButton(
-                  onPressed: () {
+                  onPressed: () async {
                     nameNode.unfocus();
                     accessTokenNode.unfocus();
                     FieldEmpty anyEmpty = SignInServices.checkInputEmpty(nameController, accessTokenController, true);
@@ -216,12 +217,7 @@ class _LoginPageState extends State<LoginPage> {
                       return;
                     }
                     // Business logic for normal Sign-In
-                    if (SignInServices.validateAccessToken(accessTokenController.text) != SignInStatus.VALID_ACCESS_TOKEN) {
-                      Fluttertoast.showToast(
-                        msg: 'Invalid access token!',
-                        textColor: Colors.white,
-                        backgroundColor: Colors.red[800],
-                      );
+                    if (await ServerServices.checkAccessToken(accessTokenController.text) == AccessCheck.INVALID_OR_ERROR) {
                       accessTokenNode.requestFocus();
                       return;
                     }
