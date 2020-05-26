@@ -184,6 +184,8 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 DecoratedTextFlatButton(
                   onPressed: () {
+                    nameNode.unfocus();
+                    accessTokenNode.unfocus();
                     FieldEmpty anyEmpty = SignInServices.checkInputEmpty(nameController, accessTokenController, true);
                     Logger loggr = new Logger();
                     loggr.d((nameController.text == "").toString() + ' ' + (accessTokenController.text == "").toString());
@@ -258,6 +260,8 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       DecoratedTextRaisedButton(
                         onPressed: () {
+                          nameNode.unfocus();
+                          accessTokenNode.unfocus();
                           FieldEmpty anyEmpty = SignInServices.checkInputEmpty(nameController, accessTokenController, true);
                           switch (anyEmpty) {
                             case FieldEmpty.ACCESSTOKEN:

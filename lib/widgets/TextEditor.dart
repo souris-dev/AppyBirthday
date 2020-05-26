@@ -11,6 +11,14 @@ class TextEditor extends StatefulWidget {
 class TextEditorState extends State<TextEditor> {
   final FocusNode seedTextFocusNode = FocusNode();
   final TextEditingController textController = TextEditingController();
+
+  @override
+  void dispose() {
+    seedTextFocusNode.dispose();
+    textController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

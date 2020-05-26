@@ -103,12 +103,12 @@ class _DashboardPageState extends State<DashboardPage> {
                       Wrap(
                         children: <Widget>[
                           Text(
-                            "Hey, " + name + '!' + "\nCongrats, you're in!" + "\nYou could try these out now:",
+                            "Welcome, " + name + "!" + "\nThanks for coming!\nTry these (swipe for more):",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Color.fromRGBO(13, 33, 67, 1),
-                              fontSize: 16,
-                              letterSpacing: 2.3,
+                              fontSize: 15,
+                              letterSpacing: 2.1,
                               fontFamily: "SegoePrint",
                             ),
                           ),
@@ -123,30 +123,6 @@ class _DashboardPageState extends State<DashboardPage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
-                                  /*GestureDetector(
-                                    onTap: () {},
-                                    child: Padding(
-                                      padding: EdgeInsets.only(bottom: 10),
-                                      child: Image.asset(
-                                        "assets/raster/EatBtn.png",
-                                        height: MediaQuery.of(context).size.height * (95 / 640),
-                                        width: MediaQuery.of(context).size.width * (207 / 360),
-                                      ),
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => SendWishesPage()));
-                                    },
-                                    child: Padding(
-                                      padding: EdgeInsets.only(top: 10),
-                                      child: Image.asset(
-                                        "assets/raster/SendWishesBtn.png",
-                                        height: MediaQuery.of(context).size.height * (95 / 640),
-                                        width: MediaQuery.of(context).size.width * (207 / 360),
-                                      ),
-                                    ),
-                                  ),*/
                                   Padding(
                                     padding: EdgeInsets.only(bottom: 10),
                                     child: DashboardButton(
@@ -163,6 +139,35 @@ class _DashboardPageState extends State<DashboardPage> {
                                             .push(MaterialPageRoute(builder: (context) => SendWishesPage()));
                                       },
                                       assetName: "assets/raster/SendWishesBtn.png",
+                                      height: MediaQuery.of(context).size.height * (95 / 640),
+                                      width: MediaQuery.of(context).size.width * (207 / 360),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // TODO: Just for testing
+                            FittedBox(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: EdgeInsets.only(bottom: 10),
+                                    child: DashboardButton(
+                                      onPressed: () {
+                                        Navigator.of(context)
+                                            .push(MaterialPageRoute(builder: (context) => SendWishesPage()));
+                                      },
+                                      assetName: "assets/raster/SendWishesBtn.png",
+                                      height: MediaQuery.of(context).size.height * (95 / 640),
+                                      width: MediaQuery.of(context).size.width * (207 / 360),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(bottom: 10),
+                                    child: DashboardButton(
+                                      assetName: "assets/raster/EatBtn.png",
                                       height: MediaQuery.of(context).size.height * (95 / 640),
                                       width: MediaQuery.of(context).size.width * (207 / 360),
                                     ),

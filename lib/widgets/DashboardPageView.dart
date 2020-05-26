@@ -12,10 +12,16 @@ class DashboardPageView extends StatefulWidget {
 
 class _DashboardPageViewState extends State<DashboardPageView> {
   final PageController pageController = PageController();
+  double leftBtnOpacity = 0.5;
+  double rightBtnOpacity = 1;
+
+  int currPageIndex = 0;
+  int numPages;
 
   @override
   void initState() {
     super.initState();
+    numPages = widget.children.length;
   }
 
   @override
@@ -28,12 +34,32 @@ class _DashboardPageViewState extends State<DashboardPageView> {
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(left: 10, right: 21),
-          child: Image.asset(
-            'assets/raster/LeftArrow_red.png',
-            height: 12,
-            width: 12,
+        GestureDetector(
+          onTap: () {
+            if (currPageIndex != 0) {
+              setState(() {
+                currPageIndex -= 1;
+                if (currPageIndex < numPages - 1) {
+                  rightBtnOpacity = 1;
+                }
+                if (currPageIndex == 0) {
+                  leftBtnOpacity = 0.5;
+                }
+                pageController.animateToPage(currPageIndex,
+                    duration: Duration(milliseconds: 200), curve: Curves.easeOutCubic);
+              });
+            }
+          },
+          child: Padding(
+            padding: EdgeInsets.only(left: 10, right: 21),
+            child: Opacity(
+              opacity: leftBtnOpacity,
+              child: Image.asset(
+                'assets/raster/LeftArrow_red.png',
+                height: 12,
+                width: 12,
+              ),
+            ),
           ),
         ),
         Expanded(
@@ -72,6 +98,24 @@ class _DashboardPageViewState extends State<DashboardPageView> {
                         child: PageView(
                           controller: pageController,
                           children: widget.children,
+                          onPageChanged: (pageNumber) {
+                            currPageIndex = pageNumber;
+
+                            setState(() {
+                              if (currPageIndex < numPages - 1) {
+                                rightBtnOpacity = 1;
+                              }
+                              if (currPageIndex == numPages - 1) {
+                                rightBtnOpacity = 0.5;
+                              }
+                              if (currPageIndex == 0) {
+                                leftBtnOpacity = 0.5;
+                              }
+                              if (currPageIndex > 0) {
+                                leftBtnOpacity = 1;
+                              }
+                            });
+                          },
                         ),
                       ),
                     ),
@@ -90,12 +134,32 @@ class _DashboardPageViewState extends State<DashboardPageView> {
             ],
           ),
         ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10),
-          child: Image.asset(
-            'assets/raster/RightArrow_red.png',
-            height: 12,
-            width: 12,
+        GestureDetector(
+          onTap: () {
+            if (currPageIndex != numPages - 1) {
+              setState(() {
+                currPageIndex += 1;
+                pageController.animateToPage(currPageIndex,
+                    duration: Duration(milliseconds: 200), curve: Curves.easeOutCubic);
+                if (currPageIndex > 0) {
+                  leftBtnOpacity = 1;
+                }
+                if (currPageIndex == numPages - 1) {
+                  rightBtnOpacity = 0.5;
+                }
+              });
+            }
+          },
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: Opacity(
+              opacity: rightBtnOpacity,
+              child: Image.asset(
+                'assets/raster/RightArrow_red.png',
+                height: 12,
+                width: 12,
+              ),
+            ),
           ),
         ),
       ],

@@ -9,6 +9,6 @@ class ServerServices {
   };
 
   static void doSend(String text, String name) async {
-    var response = await http.post(ServerPoint.MSGSEND, body: {'name': name, 'message': text});
+    var response = await http.post(serverPoints[ServerPoint.MSGSEND], body: {'name': name, 'message': text});
   }
 }

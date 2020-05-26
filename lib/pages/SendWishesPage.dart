@@ -15,7 +15,7 @@ class SendWishesPage extends StatefulWidget {
   _SendWishesPageState createState() => _SendWishesPageState();
 }
 
-class _SendWishesPageState extends State<SendWishesPage> with SingleTickerProviderStateMixin {
+class _SendWishesPageState extends State<SendWishesPage> with TickerProviderStateMixin {
   final _discs = <DiscData>[];
   final numberOfDiscs = 44;
   GlobalKey<TextEditorState> keyTextEditor = new GlobalKey<TextEditorState>();
@@ -26,6 +26,12 @@ class _SendWishesPageState extends State<SendWishesPage> with SingleTickerProvid
   Animation<double> sendScaleAnimation;
 
   bool startedSending = false;
+
+  @override
+  void dispose() {
+    sendAnimationController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -188,7 +194,10 @@ class _SendWishesPageState extends State<SendWishesPage> with SingleTickerProvid
                               child: SizedBox(
                                 width: MediaQuery.of(context).size.width * 0.3194,
                                 child: DecoratedTextFlatButtonWithIcon(
-                                  onPressed: () {
+                                  onPressed: () async {
+                                    print(keyTextEditor.currentState.textController.text);
+                                    ServerServices.doSend(
+                                        keyTextEditor.currentState.textController.text, await SharedPrefsManager.getName());
                                     setState(() => startedSending = true);
                                   },
                                   icon: Icons.send,
