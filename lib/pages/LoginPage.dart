@@ -9,19 +9,47 @@ import 'package:logger/logger.dart';
 import '../widgets/DecoratedTextFlatButton.dart';
 import '../widgets/DecoratedTextRaisedButton.dart';
 
-class Page3 extends StatefulWidget {
+class LoginPage extends StatefulWidget {
+  LoginPage({Key key, this.isLoggedIn = false}) : super(key: key);
+
+  final Avatar avatar = Avatar.MALE;
+  final String name = '';
+  final String accessToken = '';
+  final bool isLoggedIn;
   @override
-  _Page3State createState() => _Page3State();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _Page3State extends State<Page3> {
+class _LoginPageState extends State<LoginPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController accessTokenController = TextEditingController();
   final SignInPageAvatarButtonController signInPageAvatarButtonController = SignInPageAvatarButtonController();
   final FocusNode nameNode = FocusNode();
   final FocusNode accessTokenNode = FocusNode();
 
-  bool googleSignInInitiated = false;
+  void setUpPreviousVals() async {
+    var nameText = await SharedPrefsManager.getName();
+    var accessTokenText = await SharedPrefsManager.getAccessToken();
+    var avatarTemp = await SharedPrefsManager.getGenderAvatar();
+
+    setState(() {
+      nameController.text = nameText;
+      accessTokenController.text = accessTokenText;
+      signInPageAvatarButtonController.avatar = avatarTemp;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    nameController.text = widget.name;
+    accessTokenController.text = widget.accessToken;
+    signInPageAvatarButtonController.avatar = widget.avatar;
+
+    if (widget.isLoggedIn) {
+      setUpPreviousVals();
+    }
+  }
 
   @override
   void dispose() {
@@ -132,7 +160,7 @@ class _Page3State extends State<Page3> {
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
                                       borderSide: BorderSide(color: Color.fromRGBO(223, 223, 223, 1))),
-                                  labelText: 'Access Token',
+                                  labelText: 'Access Pass',
                                   enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
                                       borderSide: BorderSide(color: Color.fromRGBO(223, 223, 223, 1))),
@@ -168,7 +196,7 @@ class _Page3State extends State<Page3> {
 
                       case FieldEmpty.ACCESSTOKEN:
                         Fluttertoast.showToast(
-                            msg: 'Access token please.', textColor: Colors.white, backgroundColor: Colors.pink[700]);
+                            msg: 'Access pass please.', textColor: Colors.white, backgroundColor: Colors.pink[700]);
                         accessTokenNode.requestFocus();
                         break;
 
@@ -182,7 +210,7 @@ class _Page3State extends State<Page3> {
                         break;
                     }
 
-                    if (anyEmpty == FieldEmpty.NAME || anyEmpty == FieldEmpty.ACCESSTOKEN) {
+                    if (!(anyEmpty == FieldEmpty.NONE)) {
                       return;
                     }
                     // Business logic for normal Sign-In
@@ -196,11 +224,14 @@ class _Page3State extends State<Page3> {
                       return;
                     }
 
-                    SharedPrefsManager.setGender(signInPageAvatarButtonController.avatar);
-                    SharedPrefsManager.setName(nameController.text);
-                    SharedPrefsManager.setLoggedIn(true);
-
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => DashboardPage()));
+                    SharedPrefsManager.setGender(signInPageAvatarButtonController.avatar).then((val) {
+                      SharedPrefsManager.setName(nameController.text).then((value) {
+                        SharedPrefsManager.setAccessToken(accessTokenController.text).then((value) {
+                          SharedPrefsManager.setLoggedIn(true).then((value) =>
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => DashboardPage())));
+                        });
+                      });
+                    });
                   },
                   text: 'GET IN',
                 ),
@@ -231,7 +262,7 @@ class _Page3State extends State<Page3> {
                           switch (anyEmpty) {
                             case FieldEmpty.ACCESSTOKEN:
                               Fluttertoast.showToast(
-                                msg: 'Access token please.',
+                                msg: 'Access pass please.',
                                 textColor: Colors.white,
                                 backgroundColor: Colors.pink[700],
                               );
@@ -241,7 +272,7 @@ class _Page3State extends State<Page3> {
 
                             case FieldEmpty.BOTH:
                               Fluttertoast.showToast(
-                                msg: 'The access token is required.',
+                                msg: 'The access pass is required.',
                                 textColor: Colors.white,
                                 backgroundColor: Colors.pink[700],
                               );
@@ -257,14 +288,16 @@ class _Page3State extends State<Page3> {
                             return;
                           }
 
-                          googleSignInInitiated = true;
                           SignInServices.doGoogleSignIn(accessTokenController.text).then((value) {
                             if (value == SignInStatus.DONE) {
-                              SharedPrefsManager.setGender(signInPageAvatarButtonController.avatar);
-                              SharedPrefsManager.setName(SignInServices.currentGoogleAccount.displayName);
-                              SharedPrefsManager.setLoggedIn(true);
-
-                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => DashboardPage()));
+                              SharedPrefsManager.setGender(signInPageAvatarButtonController.avatar).then((val) {
+                                SharedPrefsManager.setName(SignInServices.currentGoogleAccount.displayName).then((value) {
+                                  SharedPrefsManager.setAccessToken(accessTokenController.text).then((value) {
+                                    SharedPrefsManager.setLoggedIn(true).then((value) => Navigator.of(context)
+                                        .push(MaterialPageRoute(builder: (context) => DashboardPage())));
+                                  });
+                                });
+                              });
                             } else if (value == SignInStatus.ERROR) {
                               throw (Exception('SignIn Error'));
                             } else if (value == SignInStatus.INVALID_ACCESS_TOKEN) {

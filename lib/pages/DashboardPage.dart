@@ -53,6 +53,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
     setState(() {
       this.name = namae;
+      print('Setting name as: ' + namae);
       this.avatarDisplayCont.avatar = avatarDisplayContAvatar;
     });
   }
@@ -78,7 +79,8 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        return true;
+        Fluttertoast.showToast(msg: 'Long press EXIT twice to log out');
+        return false;
       },
       child: SafeArea(
         child: Scaffold(
@@ -190,6 +192,8 @@ class _DashboardPageState extends State<DashboardPage> {
                                   showDialog(
                                     context: context,
                                     builder: (context) => AlertDialog(
+                                      title: Text('Leave?'),
+                                      content: Text('Do you want to leave?\nYou can log out by long-pressing the EXIT button twice.'),
                                       actions: <Widget>[
                                         FlatButton(
                                           child: Text('YES'),

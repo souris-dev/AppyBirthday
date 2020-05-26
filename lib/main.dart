@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'pages/Page2.dart';
 import 'widgets/DecoratedTextFlatButton.dart';
+import 'pages/LoginPage.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -100,7 +101,20 @@ class _MyHomePageState extends State<MyHomePage> {
                     padding: EdgeInsets.fromLTRB(10, 10, 10, 15),
                     child: DecoratedTextFlatButton(
                       onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => Page2()));
+                        // TODO: What if user is already logged in?
+                        SharedPrefsManager.isLoggedIn().then((loggedIn) {
+                          if (!loggedIn) {
+                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => Page2()));
+                          } else {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => LoginPage(
+                                  isLoggedIn: true,
+                                ),
+                              ),
+                            );
+                          }
+                        });
                       },
                       text: 'PROCEED',
                     ),

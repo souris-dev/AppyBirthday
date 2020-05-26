@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import '../widgets/DecoratedTextFlatButton.dart';
-import 'Page3.dart';
+import 'LoginPage.dart';
 
 class Page2 extends StatelessWidget {
   @override
@@ -47,7 +47,7 @@ class Page2 extends StatelessWidget {
                   padding: EdgeInsets.fromLTRB(10, 10, 10, 15),
                   child: DecoratedTextFlatButton(
                     onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => Page3()));
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoginPage()));
                     },
                     text: '  NEXT  ',
                   ),
