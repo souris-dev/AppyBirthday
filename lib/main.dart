@@ -103,6 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       onPressed: () {
                         // TODO: What if user is already logged in?
                         SharedPrefsManager.isLoggedIn().then((loggedIn) {
+                          print('User logged in? ' + loggedIn.toString());
                           if (!loggedIn) {
                             Navigator.of(context).push(MaterialPageRoute(builder: (context) => Page2()));
                           } else {
