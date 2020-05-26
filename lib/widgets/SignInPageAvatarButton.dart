@@ -27,6 +27,7 @@ class _SignInPageAvatarButtonState extends State<SignInPageAvatarButton> {
   int avaIndex = 0, avaMax = 2;
   int timesSwitched = 0;
 
+  // TODO: Check if the cat unlock works
   void setAvaMax() async {
     if (await SharedPrefsManager.getUnlockedCat()) {
       setState(() => avaMax = 3);

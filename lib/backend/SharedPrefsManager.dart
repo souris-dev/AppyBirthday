@@ -8,7 +8,20 @@ class SharedPrefsManager {
 
   static void loadSharedPrefs() async {
     _sharedPreferences = await SharedPreferences.getInstance();
-    _sharedPreferences.setBool('unlockedCat', false);
+  }
+
+  static void initSharedPrefFields() async {
+    _sharedPreferences = await SharedPreferences.getInstance();
+
+    if (_sharedPreferences.getKeys().length < 6) {
+      // first start it seems
+      _sharedPreferences.setString('gender', 'Male');
+      _sharedPreferences.setString('name', 'Nanashi');
+      _sharedPreferences.setBool('loggedIn', false);
+      _sharedPreferences.setString('accessToken', '');
+      _sharedPreferences.setInt('level', -1);
+      _sharedPreferences.setBool('unlockedCat', false);
+    }
   }
 
   static void resetPrefs() async {

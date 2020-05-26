@@ -99,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     checkConnection();
-    SharedPrefsManager.loadSharedPrefs();
+    SharedPrefsManager.initSharedPrefFields();
   }
 
   @override
