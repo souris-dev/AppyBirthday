@@ -15,10 +15,17 @@ class SendWishesPage extends StatefulWidget {
   _SendWishesPageState createState() => _SendWishesPageState();
 }
 
-class _SendWishesPageState extends State<SendWishesPage> {
+class _SendWishesPageState extends State<SendWishesPage> with SingleTickerProviderStateMixin {
   final _discs = <DiscData>[];
   final numberOfDiscs = 44;
   GlobalKey<TextEditorState> keyTextEditor = new GlobalKey<TextEditorState>();
+  Widget innerChild;
+
+  AnimationController sendAnimationController;
+  Animation<Offset> sendOffsetAnimation;
+  Animation<double> sendScaleAnimation;
+
+  bool startedSending = false;
 
   @override
   void initState() {
@@ -26,6 +33,58 @@ class _SendWishesPageState extends State<SendWishesPage> {
     _makeDiscs();
     Fluttertoast.showToast(msg: 'Use the back button to go to the dashboard.');
     Timer.periodic(Duration(seconds: 5), (timer) => setState(() => _makeDiscs()));
+
+    innerChild = Transform.rotate(
+      angle: 1.2 * pi / 180,
+      child: Padding(
+        padding: EdgeInsets.all(30),
+        child: Stack(
+          children: <Widget>[
+            Image.asset(
+              'assets/raster/TextEditorBg.png',
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+              child: Transform.rotate(
+                angle: -1.2 * pi / 180,
+                child: TextEditor(key: keyTextEditor),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Called after initState()
+  @override
+  void didChangeDependencies() {
+    sendAnimationController = AnimationController(duration: Duration(milliseconds: 2500), vsync: this);
+    sendOffsetAnimation = Tween<Offset>(
+            begin: Offset(0, 0), end: Offset(MediaQuery.of(context).size.width, -MediaQuery.of(context).size.width))
+        // We want  45 degrees angle
+        .animate(CurvedAnimation(parent: sendAnimationController, curve: Curves.elasticIn));
+
+    sendScaleAnimation = Tween<double>(begin: 1, end: 0.3).animate(
+      CurvedAnimation(curve: Interval(0.8, 1.0, curve: Curves.linearToEaseOut), parent: sendAnimationController),
+    );
+
+    sendOffsetAnimation.addListener(() {
+      setState(() {});
+    });
+    // calling setState because value of animation has changed
+    sendScaleAnimation.addListener(() {
+      setState(() {});
+    });
+
+    sendOffsetAnimation.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        Fluttertoast.showToast(msg: 'Your message will be sent.');
+        Navigator.of(context).pop();
+      }
+    });
+
+    super.didChangeDependencies();
   }
 
   void _makeDiscs() {
@@ -37,6 +96,24 @@ class _SendWishesPageState extends State<SendWishesPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (startedSending) {
+      sendAnimationController.forward();
+      innerChild = Center(
+        child: Transform(
+          transform: Matrix4.translationValues(sendOffsetAnimation.value.dx, sendOffsetAnimation.value.dy, 0)
+            ..scale(sendScaleAnimation.value),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+            child: Image.asset(
+              'assets/raster/SendPlane.png',
+              width: MediaQuery.of(context).size.width * 0.605,
+              height: MediaQuery.of(context).size.width * 0.605,
+            ),
+          ),
+        ),
+      );
+    }
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -73,7 +150,7 @@ class _SendWishesPageState extends State<SendWishesPage> {
                         child: Wrap(
                           children: <Widget>[
                             Text(
-                              "Send me your wishes!",
+                              startedSending ? "Sending..." : "Send me your wishes!",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Color.fromRGBO(13, 33, 67, 1),
@@ -93,25 +170,12 @@ class _SendWishesPageState extends State<SendWishesPage> {
                         ),
                       ),
                       Expanded(
-                        child: Transform.rotate(
-                          angle: 1.2 * pi / 180,
-                          child: Padding(
-                            padding: EdgeInsets.all(30),
-                            child: Stack(
-                              children: <Widget>[
-                                Image.asset(
-                                  'assets/raster/TextEditorBg.png',
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-                                  child: Transform.rotate(
-                                    angle: -1.2 * pi / 180,
-                                    child: TextEditor(key: keyTextEditor),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                        child: AnimatedSwitcher(
+                          duration: Duration(milliseconds: 300),
+                          transitionBuilder: (child, animationValue) {
+                            return ScaleTransition(child: child, scale: animationValue);
+                          },
+                          child: innerChild,
                         ),
                       ),
                       Container(
@@ -125,7 +189,7 @@ class _SendWishesPageState extends State<SendWishesPage> {
                                 width: MediaQuery.of(context).size.width * 0.3194,
                                 child: DecoratedTextFlatButtonWithIcon(
                                   onPressed: () {
-                                    
+                                    setState(() => startedSending = true);
                                   },
                                   icon: Icons.send,
                                   text: '  SEND',
