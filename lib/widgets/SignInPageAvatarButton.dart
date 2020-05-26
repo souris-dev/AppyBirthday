@@ -1,4 +1,6 @@
+import 'package:appy_birthday/backend/SharedPrefsManager.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 enum Avatar { MALE, FEMALE, CAT }
 
@@ -25,6 +27,18 @@ class _SignInPageAvatarButtonState extends State<SignInPageAvatarButton> {
   int avaIndex = 0, avaMax = 2;
   int timesSwitched = 0;
 
+  void setAvaMax() async {
+    if (await SharedPrefsManager.getUnlockedCat()) {
+      setState(() => avaMax = 3);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    setAvaMax();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -38,7 +52,10 @@ class _SignInPageAvatarButtonState extends State<SignInPageAvatarButton> {
               ),
             if (widget.isOnSignInPage)
               GestureDetector(
-                onLongPress: () {
+                onLongPress: () async {
+                  if (await SharedPrefsManager.getUnlockedCat()) {
+                    Fluttertoast.showToast(msg: 'Try switching a few times more');
+                  }
                   setState(() {
                     timesSwitched += 1;
                     if (timesSwitched > 3 && avaMax < 3) {
@@ -54,6 +71,7 @@ class _SignInPageAvatarButtonState extends State<SignInPageAvatarButton> {
                         ),
                       );
                       avaMax = 3;
+                      SharedPrefsManager.setUnlockedCat(true);
                     }
                     avaIndex = (avaIndex + 1) % avaMax;
                     widget.controller.avatar = avatarsAvailable[avaIndex];

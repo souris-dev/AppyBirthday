@@ -22,8 +22,8 @@ class _SendWishesPageState extends State<SendWishesPage> with TickerProviderStat
   Widget innerChild;
 
   AnimationController sendAnimationController;
-  AnimationController textboxAnimationController;
-  Animation<double> degreeAnimation;
+  //AnimationController textboxAnimationController;
+  //Animation<double> degreeAnimation;
   Animation<Offset> sendOffsetAnimation;
   Animation<double> sendScaleAnimation;
 
@@ -68,13 +68,13 @@ class _SendWishesPageState extends State<SendWishesPage> with TickerProviderStat
       ),
     );
 
-    textboxAnimationController = AnimationController(duration: Duration(seconds: 3), vsync: this);
+    /*textboxAnimationController = AnimationController(duration: Duration(seconds: 3), vsync: this);
     degreeAnimation = Tween<double>(begin: 0.2, end: 1.2).animate(
       CurvedAnimation(
         parent: textboxAnimationController,
         curve: Curves.linear,
       ),
-    );
+    );*/
 
     sendOffsetAnimation.addListener(() {
       setState(() {});
@@ -83,9 +83,10 @@ class _SendWishesPageState extends State<SendWishesPage> with TickerProviderStat
     sendScaleAnimation.addListener(() {
       setState(() {});
     });
+    /*
     degreeAnimation.addListener(() {
       setState(() {});
-    });
+    });*/
 
     sendOffsetAnimation.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
@@ -95,7 +96,7 @@ class _SendWishesPageState extends State<SendWishesPage> with TickerProviderStat
     });
 
     super.didChangeDependencies();
-    textboxAnimationController.repeat(reverse: true);
+    //textboxAnimationController.repeat(reverse: true);
   }
 
   void _makeDiscs() {
@@ -125,7 +126,7 @@ class _SendWishesPageState extends State<SendWishesPage> with TickerProviderStat
       );
     } else {
       innerChild = Transform.rotate(
-        angle: degreeAnimation.value * pi / 180,
+        angle: 1.2 * pi / 180,
         child: Padding(
           padding: EdgeInsets.all(30),
           child: Stack(
@@ -136,7 +137,7 @@ class _SendWishesPageState extends State<SendWishesPage> with TickerProviderStat
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
                 child: Transform.rotate(
-                  angle: -degreeAnimation.value * pi / 180,
+                  angle: -1.2 * pi / 180,
                   child: TextEditor(key: keyTextEditor),
                 ),
               ),
@@ -223,8 +224,8 @@ class _SendWishesPageState extends State<SendWishesPage> with TickerProviderStat
                                   onPressed: () async {
                                     ServerServices.doSend(
                                         keyTextEditor.currentState.textController.text, await SharedPrefsManager.getName());
-                                    textboxAnimationController.stop();
-                                    textboxAnimationController.dispose();
+                                    //textboxAnimationController.stop();
+                                    //textboxAnimationController.dispose();
                                     setState(() => startedSending = true);
                                   },
                                   icon: Icons.send,

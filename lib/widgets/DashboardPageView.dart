@@ -13,7 +13,7 @@ class DashboardPageView extends StatefulWidget {
 class _DashboardPageViewState extends State<DashboardPageView> {
   final PageController pageController = PageController();
   double leftBtnOpacity = 0.5;
-  double rightBtnOpacity = 1;
+  double rightBtnOpacity = 0.5;
 
   int currPageIndex = 0;
   int numPages;
@@ -36,7 +36,7 @@ class _DashboardPageViewState extends State<DashboardPageView> {
       children: <Widget>[
         GestureDetector(
           onTap: () {
-            if (currPageIndex != 0) {
+            /*if (currPageIndex != 0) {
               setState(() {
                 currPageIndex -= 1;
                 if (currPageIndex < numPages - 1) {
@@ -48,7 +48,7 @@ class _DashboardPageViewState extends State<DashboardPageView> {
                 pageController.animateToPage(currPageIndex,
                     duration: Duration(milliseconds: 200), curve: Curves.easeOutCubic);
               });
-            }
+            }*/
           },
           child: Padding(
             padding: EdgeInsets.only(left: 10, right: 21),
@@ -102,6 +102,7 @@ class _DashboardPageViewState extends State<DashboardPageView> {
                             currPageIndex = pageNumber;
 
                             setState(() {
+                              currPageIndex = pageNumber;
                               if (currPageIndex < numPages - 1) {
                                 rightBtnOpacity = 1;
                               }
@@ -136,7 +137,7 @@ class _DashboardPageViewState extends State<DashboardPageView> {
         ),
         GestureDetector(
           onTap: () {
-            if (currPageIndex != numPages - 1) {
+            /*if (currPageIndex != numPages - 1) {
               setState(() {
                 currPageIndex += 1;
                 pageController.animateToPage(currPageIndex,
@@ -148,7 +149,7 @@ class _DashboardPageViewState extends State<DashboardPageView> {
                   rightBtnOpacity = 0.5;
                 }
               });
-            }
+            }*/
           },
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 10),

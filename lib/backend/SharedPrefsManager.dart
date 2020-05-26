@@ -8,6 +8,7 @@ class SharedPrefsManager {
 
   static void loadSharedPrefs() async {
     _sharedPreferences = await SharedPreferences.getInstance();
+    _sharedPreferences.setBool('unlockedCat', false);
   }
 
   static void resetPrefs() async {
@@ -70,6 +71,16 @@ class SharedPrefsManager {
   static Future<String> getAccessToken() async {
     _sharedPreferences = await SharedPreferences.getInstance();
     return _sharedPreferences.getString('accessToken');
+  }
+
+  static Future<void> setUnlockedCat(bool value) async {
+    _sharedPreferences = await SharedPreferences.getInstance();
+    _sharedPreferences.setBool('unlockedCat', value);
+  }
+
+  static Future<bool> getUnlockedCat() async {
+    _sharedPreferences = await SharedPreferences.getInstance();
+    return _sharedPreferences.getBool('unlockedCat');
   }
 
   static Future<void> setAccessLevel(AccessCheck level) async {
