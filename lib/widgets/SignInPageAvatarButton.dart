@@ -54,7 +54,7 @@ class _SignInPageAvatarButtonState extends State<SignInPageAvatarButton> {
             if (widget.isOnSignInPage)
               GestureDetector(
                 onLongPress: () async {
-                  if (await SharedPrefsManager.getUnlockedCat()) {
+                  if (avaMax < 3) {
                     Fluttertoast.showToast(msg: 'Try switching a few times more');
                   }
                   setState(() {

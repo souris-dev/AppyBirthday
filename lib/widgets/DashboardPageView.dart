@@ -12,8 +12,8 @@ class DashboardPageView extends StatefulWidget {
 
 class _DashboardPageViewState extends State<DashboardPageView> {
   final PageController pageController = PageController();
-  double leftBtnOpacity = 0.5;
-  double rightBtnOpacity = 0.5;
+  double leftBtnOpacity = 0.2;
+  double rightBtnOpacity = 0.2;
 
   int currPageIndex = 0;
   int numPages;
@@ -99,11 +99,10 @@ class _DashboardPageViewState extends State<DashboardPageView> {
                           controller: pageController,
                           children: widget.children,
                           onPageChanged: (pageNumber) {
-                            currPageIndex = pageNumber;
 
                             setState(() {
                               currPageIndex = pageNumber;
-                              if (currPageIndex < numPages - 1) {
+                              /*if (currPageIndex < numPages - 1) {
                                 rightBtnOpacity = 1;
                               }
                               if (currPageIndex == numPages - 1) {
@@ -114,7 +113,7 @@ class _DashboardPageViewState extends State<DashboardPageView> {
                               }
                               if (currPageIndex > 0) {
                                 leftBtnOpacity = 1;
-                              }
+                              }*/
                             });
                           },
                         ),

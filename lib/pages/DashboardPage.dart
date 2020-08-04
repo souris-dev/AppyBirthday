@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/services.dart';
 
 import 'package:appy_birthday/backend/ServerServices.dart';
 import 'package:appy_birthday/backend/SharedPrefsManager.dart';
@@ -63,7 +64,7 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Fluttertoast.showToast(msg: 'Long press EXIT twice to log out');
+        Fluttertoast.showToast(msg: 'Press EXIT to log out and quit');
         return false;
       },
       child: SafeArea(
@@ -108,7 +109,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       Wrap(
                         children: <Widget>[
                           Text(
-                            "Welcome, " + name + "!" + "\nThanks for coming!\nTry these (swipe for more):",
+                            "Welcome, " + name + "!" + "\nThanks for coming!\nTry these" + ((accessLevel == AccessCheck.HIGH) ? " (swipe for more):" : ':'),
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Color.fromRGBO(13, 33, 67, 1),
@@ -187,26 +188,37 @@ class _DashboardPageState extends State<DashboardPage> {
                             padding: EdgeInsets.fromLTRB(10, 10, 10, 15),
                             child: GestureDetector(
                               onLongPress: () {
-                                longPressedExitTimes += 1;
+                                /*longPressedExitTimes += 1;
                                 if (longPressedExitTimes == 1) {
                                   Fluttertoast.showToast(msg: 'Long press again to log out.');
                                 } else if (longPressedExitTimes > 1) {
                                   SharedPrefsManager.resetPrefs();
                                   Navigator.of(context).pop();
-                                }
+                                }*/
                               },
                               child: DecoratedTextFlatButton(
                                 onPressed: () {
+                                  SystemChrome.setSystemUIOverlayStyle(
+                                    SystemUiOverlayStyle(
+                                      statusBarColor: Colors.black,
+                                      statusBarBrightness: Brightness.light,
+                                      statusBarIconBrightness: Brightness.light,
+                                      systemNavigationBarColor: Colors.black,
+                                      systemNavigationBarIconBrightness: Brightness.light,
+                                    ),
+                                  );
                                   showDialog(
                                     context: context,
                                     builder: (context) => AlertDialog(
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                                       title: Text('Leave?'),
                                       content: Text(
-                                          'Do you want to leave?\nYou can log out by long-pressing the EXIT button twice.'),
+                                          'Do you want to leave?'),
                                       actions: <Widget>[
                                         FlatButton(
                                           child: Text('YES'),
                                           onPressed: () {
+                                            SharedPrefsManager.resetPrefs();
                                             exit(0);
                                           },
                                         ),
@@ -214,6 +226,15 @@ class _DashboardPageState extends State<DashboardPage> {
                                           child: Text('NO'),
                                           onPressed: () {
                                             Navigator.of(context).pop('dialog');
+                                            SystemChrome.setSystemUIOverlayStyle(
+                                              SystemUiOverlayStyle(
+                                                statusBarColor: Colors.white,
+                                                statusBarBrightness: Brightness.dark,
+                                                statusBarIconBrightness: Brightness.dark,
+                                                systemNavigationBarColor: Colors.white,
+                                                systemNavigationBarIconBrightness: Brightness.dark,
+                                              ),
+                                            );
                                           },
                                         )
                                       ],

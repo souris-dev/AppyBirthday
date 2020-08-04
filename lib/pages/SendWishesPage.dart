@@ -219,7 +219,7 @@ class _SendWishesPageState extends State<SendWishesPage> with TickerProviderStat
                             child: GestureDetector(
                               onLongPress: () {},
                               child: SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.3194,
+                                width: MediaQuery.of(context).size.width * 0.37,
                                 child: DecoratedTextFlatButtonWithIcon(
                                   onPressed: () async {
                                     ServerServices.doSend(

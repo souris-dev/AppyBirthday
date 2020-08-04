@@ -26,7 +26,7 @@ class ServerServices {
 
       if (resp.statusCode == 200) {
         if (json.decode(resp.body)['authorized'] == 'true') {
-          Fluttertoast.showToast(msg: 'You got in!', textColor: Colors.white, backgroundColor: Colors.blue[700]);
+          Fluttertoast.showToast(msg: 'Access pass authorized!', textColor: Colors.white, backgroundColor: Colors.blue[700]);
           if (json.decode(resp.body)['level'] == '0') {
             await SharedPrefsManager.setAccessLevel(AccessCheck.HIGH);
             return AccessCheck.HIGH;

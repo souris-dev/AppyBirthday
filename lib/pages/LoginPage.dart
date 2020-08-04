@@ -151,7 +151,7 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               ),
                             ),
-                            Padding(
+                            /*Padding(
                               padding: EdgeInsets.fromLTRB(10, 17, 10, 10),
                               child: TextField(
                                 focusNode: accessTokenNode,
@@ -176,7 +176,7 @@ class _LoginPageState extends State<LoginPage> {
                                   color: Color.fromRGBO(13, 33, 67, 1),
                                 ),
                               ),
-                            ),
+                            ),*/
                           ],
                         ),
                       ),
@@ -185,51 +185,105 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 DecoratedTextFlatButton(
                   onPressed: () async {
-                    nameNode.unfocus();
-                    accessTokenNode.unfocus();
-                    FieldEmpty anyEmpty = SignInServices.checkInputEmpty(nameController, accessTokenController, true);
-                    Logger loggr = new Logger();
-                    loggr.d((nameController.text == "").toString() + ' ' + (accessTokenController.text == "").toString());
-                    switch (anyEmpty) {
-                      case FieldEmpty.NAME:
-                        nameNode.requestFocus();
-                        Fluttertoast.showToast(
-                            msg: 'Forgot your name?', textColor: Colors.white, backgroundColor: Colors.pink[700]);
-                        break;
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                        title: Text('Access Pass'),
+                        content: Padding(
+                          padding: EdgeInsets.fromLTRB(10, 17, 10, 10),
+                          child: TextField(
+                            focusNode: accessTokenNode,
+                            controller: accessTokenController,
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.all(20),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(color: Color.fromRGBO(223, 223, 223, 1))),
+                              labelText: 'Access Pass',
+                              enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(color: Color.fromRGBO(223, 223, 223, 1))),
+                              focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(color: Color.fromRGBO(219, 219, 219, 1))),
+                              labelStyle: TextStyle(color: Color.fromRGBO(64, 0, 190, 1), fontFamily: 'SegoePrint'),
+                            ),
+                            cursorWidth: 1,
+                            cursorColor: Color.fromRGBO(195, 195, 195, 1),
+                            style: TextStyle(
+                              color: Color.fromRGBO(13, 33, 67, 1),
+                            ),
+                          ),
+                        ),
+                        actions: <Widget>[
+                          DecoratedTextFlatButton(
+                            onPressed: () async {
+                              nameNode.unfocus();
+                              accessTokenNode.unfocus();
+                              FieldEmpty anyEmpty =
+                                  SignInServices.checkInputEmpty(nameController, accessTokenController, true);
+                              Logger loggr = new Logger();
+                              loggr.d((nameController.text == "").toString() +
+                                  ' ' +
+                                  (accessTokenController.text == "").toString());
+                              switch (anyEmpty) {
+                                case FieldEmpty.NAME:
+                                  Navigator.of(context).pop('dialog');
+                                  nameNode.requestFocus();
+                                  Fluttertoast.showToast(
+                                      msg: 'Forgot your name?', textColor: Colors.white, backgroundColor: Colors.pink[700]);
+                                  break;
 
-                      case FieldEmpty.ACCESSTOKEN:
-                        Fluttertoast.showToast(
-                            msg: 'Access pass please.', textColor: Colors.white, backgroundColor: Colors.pink[700]);
-                        accessTokenNode.requestFocus();
-                        break;
+                                case FieldEmpty.ACCESSTOKEN:
+                                  Fluttertoast.showToast(
+                                      msg: 'Access pass please.',
+                                      textColor: Colors.white,
+                                      backgroundColor: Colors.pink[700]);
+                                  accessTokenNode.requestFocus();
+                                  break;
 
-                      case FieldEmpty.BOTH:
-                        Fluttertoast.showToast(
-                            msg: 'Dummy! Fill the fields.', textColor: Colors.white, backgroundColor: Colors.pink[700]);
-                        nameNode.requestFocus();
-                        break;
+                                case FieldEmpty.BOTH:
+                                  Navigator.of(context).pop('dialog');
+                                  Fluttertoast.showToast(
+                                      msg: 'Dummy! Fill the fields.',
+                                      textColor: Colors.white,
+                                      backgroundColor: Colors.pink[700]);
+                                  nameNode.requestFocus();
+                                  break;
 
-                      default:
-                        break;
-                    }
+                                default:
+                                  break;
+                              }
 
-                    if (!(anyEmpty == FieldEmpty.NONE)) {
-                      return;
-                    }
-                    // Business logic for normal Sign-In
-                    if (await ServerServices.checkAccessToken(accessTokenController.text) == AccessCheck.INVALID_OR_ERROR) {
-                      accessTokenNode.requestFocus();
-                      return;
-                    }
+                              if (!(anyEmpty == FieldEmpty.NONE)) {
+                                return;
+                              }
+                              // Business logic for normal Sign-In
+                              if (await ServerServices.checkAccessToken(accessTokenController.text) ==
+                                  AccessCheck.INVALID_OR_ERROR) {
+                                accessTokenNode.requestFocus();
+                                return;
+                              }
 
-                    SharedPrefsManager.setGender(signInPageAvatarButtonController.avatar).then((val) {
-                      SharedPrefsManager.setName(nameController.text).then((value) {
-                        SharedPrefsManager.setAccessToken(accessTokenController.text).then((value) {
-                          SharedPrefsManager.setLoggedIn(true).then((value) =>
-                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => DashboardPage())));
-                        });
-                      });
-                    });
+                              String acsTok = accessTokenController.text;
+                              accessTokenController.dispose();
+                              Navigator.of(context).pop('dialog');
+
+                              SharedPrefsManager.setGender(signInPageAvatarButtonController.avatar).then((val) {
+                                SharedPrefsManager.setName(nameController.text).then((value) {
+                                  SharedPrefsManager.setAccessToken(acsTok).then((value) {
+                                    SharedPrefsManager.setLoggedIn(true).then((value) => Navigator.of(context)
+                                        .push(MaterialPageRoute(builder: (context) => DashboardPage())));
+                                  });
+                                });
+                              });
+                            },
+                            text: ' GO! ',
+                          )
+                        ],
+                      ),
+                    );
                   },
                   text: 'GET IN',
                 ),
@@ -256,72 +310,105 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       DecoratedTextRaisedButton(
                         onPressed: () {
-                          nameNode.unfocus();
-                          accessTokenNode.unfocus();
-                          FieldEmpty anyEmpty = SignInServices.checkInputEmpty(nameController, accessTokenController, true);
-                          switch (anyEmpty) {
-                            case FieldEmpty.ACCESSTOKEN:
-                              Fluttertoast.showToast(
-                                msg: 'Access pass please.',
-                                textColor: Colors.white,
-                                backgroundColor: Colors.pink[700],
-                              );
-
-                              accessTokenNode.requestFocus();
-                              break;
-
-                            case FieldEmpty.BOTH:
-                              Fluttertoast.showToast(
-                                msg: 'The access pass is required.',
-                                textColor: Colors.white,
-                                backgroundColor: Colors.pink[700],
-                              );
-
-                              accessTokenNode.requestFocus();
-                              break;
-
-                            default:
-                              break;
-                          }
-
-                          if (anyEmpty == FieldEmpty.ACCESSTOKEN || anyEmpty == FieldEmpty.BOTH) {
-                            return;
-                          }
-
-                          SignInServices.doGoogleSignIn(accessTokenController.text).then((value) {
-                            if (value == SignInStatus.DONE) {
-                              SharedPrefsManager.setGender(signInPageAvatarButtonController.avatar).then((val) {
-                                SharedPrefsManager.setName(SignInServices.currentGoogleAccount.displayName).then((value) {
-                                  SharedPrefsManager.setAccessToken(accessTokenController.text).then((value) {
-                                    SharedPrefsManager.setLoggedIn(true).then((value) => Navigator.of(context)
-                                        .push(MaterialPageRoute(builder: (context) => DashboardPage())));
-                                  });
-                                });
-                              });
-                            } else if (value == SignInStatus.ERROR) {
-                              throw (Exception('SignIn Error'));
-                            } else if (value == SignInStatus.INVALID_ACCESS_TOKEN) {
-                              Fluttertoast.showToast(
-                                msg: 'Invalid access token!',
-                                textColor: Colors.white,
-                                backgroundColor: Colors.red[800],
-                              );
-                              accessTokenNode.requestFocus();
-                              return;
-                            }
-                          }).catchError((e) {
-                            Fluttertoast.showToast(
-                              msg: 'Google Sign-In failed.',
-                              textColor: Colors.white,
-                              backgroundColor: Colors.red[800],
-                            );
-
-                            Logger lgr = Logger();
-                            lgr.e('Could not do Google Sign-In');
-                            print(e.error);
-                          });
-
                           // Business logic here for Google Sign-In
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                              title: Text('Access Pass'),
+                              content: Padding(
+                                padding: EdgeInsets.fromLTRB(10, 17, 10, 10),
+                                child: TextField(
+                                  focusNode: accessTokenNode,
+                                  controller: accessTokenController,
+                                  decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.all(20),
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                        borderSide: BorderSide(color: Color.fromRGBO(223, 223, 223, 1))),
+                                    labelText: 'Access Pass',
+                                    enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                        borderSide: BorderSide(color: Color.fromRGBO(223, 223, 223, 1))),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                        borderSide: BorderSide(color: Color.fromRGBO(219, 219, 219, 1))),
+                                    labelStyle: TextStyle(color: Color.fromRGBO(64, 0, 190, 1), fontFamily: 'SegoePrint'),
+                                  ),
+                                  cursorWidth: 1,
+                                  cursorColor: Color.fromRGBO(195, 195, 195, 1),
+                                  style: TextStyle(
+                                    color: Color.fromRGBO(13, 33, 67, 1),
+                                  ),
+                                ),
+                              ),
+                              actions: <Widget>[
+                                DecoratedTextFlatButton(
+                                  onPressed: () async {
+                                    //nameNode.unfocus();
+                                    accessTokenNode.unfocus();
+                                    print('All ok after unfocus!');
+                                    if (accessTokenController.text == '') {
+                                      Fluttertoast.showToast(
+                                        msg: 'Access pass please.',
+                                        textColor: Colors.white,
+                                        backgroundColor: Colors.pink[700],
+                                      );
+
+                                      accessTokenNode.requestFocus();
+                                      return;
+                                    }
+                                    print('All ok before gettext!');
+                                    String acsTok = accessTokenController.text;
+
+                                    print('All ok before try signin!');
+                                    SignInServices.doGoogleSignOut();
+                                    //var success = false;
+                                    try {
+                                      var signedInStatus = await SignInServices.doGoogleSignIn(acsTok);
+                                      if (signedInStatus == SignInStatus.DONE) {
+                                        var loggr = Logger();
+                                        loggr.d('Success, all ok before push!');
+                                        Navigator.of(context).pop('dialog');
+                                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => DashboardPage()));
+                                        await SharedPrefsManager.setGender(signInPageAvatarButtonController.avatar);
+                                        await SharedPrefsManager.setName(SignInServices.currentGoogleAccount.displayName);
+                                        await SharedPrefsManager.setAccessToken(accessTokenController.text);
+                                        await SharedPrefsManager.setLoggedIn(true);
+                                      } else if (signedInStatus == SignInStatus.ERROR) {
+                                        throw (Exception('SignIn Error'));
+                                      } else if (signedInStatus == SignInStatus.INVALID_ACCESS_TOKEN) {
+                                        /*Fluttertoast.showToast(
+                                          msg: 'Invalid access token!',
+                                          textColor: Colors.white,
+                                          backgroundColor: Colors.red[800],
+                                        );*/
+                                        accessTokenNode.requestFocus();
+                                        return;
+                                      }
+                                    } catch (e) {
+                                      Fluttertoast.showToast(
+                                        msg: 'Google Sign-In failed.',
+                                        textColor: Colors.white,
+                                        backgroundColor: Colors.red[800],
+                                      );
+
+                                      Logger lgr = Logger();
+                                      lgr.e('Could not do Google Sign-In');
+                                      //print(e.error);
+                                    }
+                                    /*Logger lgr = Logger();
+                                      lgr.d(success);
+                                      print(success);
+                                      if (success) {
+                                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => DashboardPage()));
+                                      }*/
+                                  },
+                                  text: ' GO! ',
+                                )
+                              ],
+                            ),
+                          );
                         },
                         text: 'GOOGLE SIGN-IN',
                       )
